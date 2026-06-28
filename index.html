@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Missão do Coração 💖</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to top, #ff758c, #ff7eb3);
+      color: white;
+    }
+
+    #game {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+
+    #startScreen, #endScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: rgba(0,0,0,0.7);
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 32px;
+      user-select: none;
+      z-index: 1;
+    }
+
+    #score {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 22px;
+      z-index: 5;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="startScreen">
+  <h1>💖 Missão do Coração</h1>
+  <p>Capture 10 corações para desbloquear algo especial...</p>
+  <button id="startBtn">Começar</button>
+</div>
+
+<div id="game"></div>
+<div id="score">❤️ 0</div>
+
+<div id="endScreen" style="display:none;">
+  <h1>😍 Você conseguiu!</h1>
+  <h2>Agora me diz...</h2>
+  <h2>Vamos transar quando? 💘</h2>
+  <button onclick="aceitou()">AGORA 😍</button>
+</div>
+
+<script>
+let score = 0;
+let gameInterval;
+let isPlaying = false;
+
+const game = document.getElementById("game");
+const scoreDisplay = document.getElementById("score");
+
+document.getElementById("startBtn").addEventListener("click", startGame);
+
+function startGame() {
+  document.getElementById("startScreen").style.display = "none";
+  isPlaying = true;
+
+  gameInterval = setInterval(createHeart, 800);
+}
+
+function createHeart() {
+  if (!isPlaying) return;
+
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+
+  const maxX = window.innerWidth - 40;
+  heart.style.left = Math.random() * maxX + "px";
+  heart.style.top = "-40px";
+
+  game.appendChild(heart);
+
+  let posY = -40;
+
+  const fall = setInterval(() => {
+    posY += 5;
+    heart.style.top = posY + "px";
+
+    if (posY > window.innerHeight) {
+      heart.remove();
+      clearInterval(fall);
+    }
+  }, 30);
+
+  // SUPORTE MOBILE + CLICK
+  heart.addEventListener("click", collectHeart);
+  heart.addEventListener("touchstart", collectHeart);
+
+  function collectHeart() {
+    if (!heart.parentNode) return;
+
+    score++;
+    scoreDisplay.innerText = "❤️ " + score;
+
+    heart.remove();
+    clearInterval(fall);
+
+    if (score >= 10) {
+      endGame();
+    }
+  }
+}
+
+function endGame() {
+  isPlaying = false;
+  clearInterval(gameInterval);
+
+  document.getElementById("endScreen").style.display = "flex";
+}
+
+function aceitou() {
+  alert("Perfeito 😍 agora só me chamar pra gente marcar!");
+}
+</script>
+
+</body>
+</html>
